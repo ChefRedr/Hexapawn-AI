@@ -3,6 +3,7 @@ import javax.swing.JPanel;
 import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+import java.awt.Color;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +18,7 @@ public class HexapawnGUI extends JFrame implements ActionListener {
     private JButton[] buttonBoard = new JButton[BOARD_LENGTH];
     ImageIcon whitePawnIcon = new ImageIcon("images\\hexapawn_white_pawn.png");
     ImageIcon blackPawnIcon = new ImageIcon("images\\hexapawn_black_pawn.png");
-    private boolean whiteMove = true;
+    private boolean whiteTurn = true;
 
     private final static int EMPTY = 0;
     private final static int WHITE_PAWN = 1;
@@ -59,8 +60,45 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         }
     }
 
+    public boolean isLegalMove(int from, int to) {
+        if(to == from - 3) { //Check if piece is moving directly ahead
+            if(gameBoard[to] == EMPTY) { return true; }
+        }
+        else if((to == from - 2 && (from + 1) % 3 != 0 ) || to == from - 4) { //Check if piece is moving diagonally
+            if(gameBoard[to] == BLACK_PAWN) { return true; }
+        }
+
+        return false;
+    }
+
+    public void move(int from, int to) {
+
+    }
+
+    /*
+     * Will return the index of any piece that is selected
+     * Will return -1 if there are no pieces selected
+    */
+    public int findSelectedIndex() {
+        for(int i = 0; i < BOARD_LENGTH; ++i) {
+            if(gameBoard[i] / SELECTED == 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+        if(whiteTurn) {
+            for(int i = 0; i < BOARD_LENGTH; ++i) {
+                if(e.getSource() == buttonBoard[i]) {
+                    if(findSelectedIndex() == -1 && gameBoard[i] == WHITE_PAWN) {
+                        gameBoard[i] += SELECTED;
+                        buttonBoard[i].setBackground(Color.GREEN);
+                    }
+                }
+            }
+        }
     }
 }
