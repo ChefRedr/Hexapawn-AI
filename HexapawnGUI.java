@@ -89,15 +89,31 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         return false;
     }
 
+    public void printInfo() {
+        for(int i = 0; i < BOARD_LENGTH; ++i) {
+            System.out.print(gameBoard[i] + ", ");
+            if(i == 2 || i == 5) { System.out.println(); }
+            if(i == BOARD_LENGTH - 1) { System.out.println('\n'); }
+        }
+    }
+
+    public void checkWin() {
+
+    }
+
     public void move(int from, int to) {
         if(whiteTurn) {
             if(isLegalMove(from, to)) {
-                
+                System.out.println("White's Move - From: " + from + " To: " + to);
+                gameBoard[to] = WHITE_PAWN;
+                buttonBoard[to].setIcon(whitePawnIcon);
+                gameBoard[from] = EMPTY;
+                buttonBoard[from].setIcon(null);
+                // whiteTurn = false;
             }
-            else {
-                
-            }
+            buttonBoard[from].setBackground(null);
         }
+        printInfo();
     }
 
     /*
