@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.Color;
+import javax.swing.JLabel;
+import java.awt.Font;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +21,13 @@ public class HexapawnGUI extends JFrame implements ActionListener {
     ImageIcon whitePawnIcon = new ImageIcon("images\\hexapawn_white_pawn.png");
     ImageIcon blackPawnIcon = new ImageIcon("images\\hexapawn_black_pawn.png");
     private boolean whiteTurn = true;
+    private int whiteWins = 0;
+    private int blackWins = 0;
+    private JLabel whiteWinsLabel = new JLabel("Human Wins: " + whiteWins);
+    private JLabel blackWinsLabel = new JLabel("AI Wins: " + blackWins);
+    private JLabel botIntelligence = new JLabel("Bot Intelligence Level: ");
+    private JLabel[] boardCoordinates = new JLabel[6];
+    Font myFont = new Font("Ariel", Font.PLAIN, 25);
 
     private final static int EMPTY = 0;
     private final static int WHITE_PAWN = 1;
@@ -31,9 +40,19 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         setResizable(false);
         setIconImage(blackPawnIcon.getImage());
 
+        whiteWinsLabel.setBounds(165, 400, 300, 50);
+        whiteWinsLabel.setFont(myFont);
+        blackWinsLabel.setBounds(165, 425, 300, 50);
+        blackWinsLabel.setFont(myFont);
+        botIntelligence.setBounds(100, 35, 300, 50);
+        botIntelligence.setFont(myFont);
+
         gamePanel.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         gamePanel.setLayout(null);
         initializeBoard();
+        gamePanel.add(whiteWinsLabel);
+        gamePanel.add(blackWinsLabel);
+        gamePanel.add(botIntelligence);
 
         add(gamePanel);
         pack();
@@ -72,7 +91,14 @@ public class HexapawnGUI extends JFrame implements ActionListener {
     }
 
     public void move(int from, int to) {
-
+        if(whiteTurn) {
+            if(isLegalMove(from, to)) {
+                
+            }
+            else {
+                
+            }
+        }
     }
 
     /*
@@ -96,6 +122,9 @@ public class HexapawnGUI extends JFrame implements ActionListener {
                     if(findSelectedIndex() == -1 && gameBoard[i] == WHITE_PAWN) {
                         gameBoard[i] += SELECTED;
                         buttonBoard[i].setBackground(Color.GREEN);
+                    }
+                    else if(findSelectedIndex() != -1) {
+                        move(findSelectedIndex(), i);
                     }
                 }
             }
