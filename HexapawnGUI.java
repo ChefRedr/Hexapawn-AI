@@ -104,20 +104,27 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         }
     }
 
-    public boolean areTherePossibleMoves() {
-        for(int i = 0; i < BOARD_LENGTH; ++i) {
-            if(gameBoard[i] == WHITE_PAWN) {
-                if(isLegalMove(i, i-2) || isLegalMove(i, i-3) || isLegalMove(i, i-4)) {
-                    return true;
-                }
+    // public boolean areTherePossibleMoves() {
+    //     for(int i = 0; i < BOARD_LENGTH; ++i) {
+    //         if(gameBoard[i] == WHITE_PAWN) {
+    //             if(isLegalMove(i, i-2) || isLegalMove(i, i-3) || isLegalMove(i, i-4)) {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    public boolean checkWin(int person) {
+        if(person == WHITE_PAWN) {
+            if(gameBoard[0] == WHITE_PAWN || gameBoard[1] == WHITE_PAWN || gameBoard[2] == WHITE_PAWN) {
+                return true;
             }
         }
-        return false;
-    }
-
-    public boolean checkWin() {
-        if(gameBoard[0] == WHITE_PAWN || gameBoard[1] == WHITE_PAWN || gameBoard[2] == WHITE_PAWN) {
-            return true;
+        else if(person == BLACK_PAWN) {
+            if(gameBoard[6] == BLACK_PAWN || gameBoard[7] == BLACK_PAWN || gameBoard[8] == BLACK_PAWN) {
+                return true;
+            }
         }
         return false;
     }
@@ -131,7 +138,7 @@ public class HexapawnGUI extends JFrame implements ActionListener {
                 gameBoard[from] = EMPTY;
                 buttonBoard[from].setIcon(null);
                 // whiteTurn = false;
-                if(checkWin()) {
+                if(checkWin(WHITE_PAWN)) {
                     setBoard();
                     whiteTurn = true;
                     ++whiteWins;
@@ -140,6 +147,9 @@ public class HexapawnGUI extends JFrame implements ActionListener {
             }
             if(gameBoard[from] > 10) { gameBoard[from] -= SELECTED; }
             buttonBoard[from].setBackground(null);
+        }
+        else {
+
         }
         printInfo();
     }
