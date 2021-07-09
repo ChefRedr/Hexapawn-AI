@@ -27,11 +27,12 @@ public class HexapawnGUI extends JFrame implements ActionListener {
     private JLabel blackWinsLabel = new JLabel("AI Wins: " + blackWins);
     private JLabel botIntelligence = new JLabel("AI Intelligence Level: ");
     private Font myFont = new Font("Ariel", Font.PLAIN, 25);
+    HexapawnAI AI = new HexapawnAI();
 
-    private final static int EMPTY = 0;
-    private final static int WHITE_PAWN = 1;
-    private final static int BLACK_PAWN = 2;
-    private final static int SELECTED = 10;
+    public final static int EMPTY = 0;
+    public final static int WHITE_PAWN = 1;
+    public final static int BLACK_PAWN = 2;
+    public final static int SELECTED = 10;
 
     public HexapawnGUI() {
         setTitle("Hexapawn AI");
@@ -104,16 +105,16 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         }
     }
 
-    // public boolean areTherePossibleMoves() {
-    //     for(int i = 0; i < BOARD_LENGTH; ++i) {
-    //         if(gameBoard[i] == WHITE_PAWN) {
-    //             if(isLegalMove(i, i-2) || isLegalMove(i, i-3) || isLegalMove(i, i-4)) {
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    //     return false;
-    // }
+    public boolean areTherePossibleMoves() {
+        for(int i = 0; i < BOARD_LENGTH; ++i) {
+            if(gameBoard[i] == WHITE_PAWN) {
+                if(isLegalMove(i, i-2) || isLegalMove(i, i-3) || isLegalMove(i, i-4)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public boolean checkWin(int person) {
         if(person == WHITE_PAWN) {
@@ -137,19 +138,36 @@ public class HexapawnGUI extends JFrame implements ActionListener {
                 buttonBoard[to].setIcon(whitePawnIcon);
                 gameBoard[from] = EMPTY;
                 buttonBoard[from].setIcon(null);
-                // whiteTurn = false;
+                whiteTurn = false;
                 if(checkWin(WHITE_PAWN)) {
                     setBoard();
                     whiteTurn = true;
                     ++whiteWins;
                     whiteWinsLabel.setText("Human Wins: " + whiteWins);
                 }
+                else {
+                    AI.createMove(gameBoard);
+                    move(AI.from, AI.to);
+                }
             }
             if(gameBoard[from] > 10) { gameBoard[from] -= SELECTED; }
             buttonBoard[from].setBackground(null);
         }
         else {
-
+            if(to != -1) {
+                System.out.println("Black's Move - From: " + from + " To: " + to);
+                gameBoard[to] = BLACK_PAWN;
+                buttonBoard[to].setIcon(blackPawnIcon);
+                gameBoard[from] = EMPTY;
+                buttonBoard[from].setIcon(null);
+                if(checkWin(BLACK_PAWN) || !areTherePossibleMoves()) {
+                    setBoard();
+                    whiteTurn = true;
+                    ++blackWins;
+                    blackWinsLabel.setText("AI Wins: " + blackWins);
+                }
+                else { whiteTurn = true; }
+            }
         }
         printInfo();
     }

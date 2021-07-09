@@ -6,7 +6,9 @@ public class HexapawnAI {
     private HashMap<Integer[], HexapawnMove[]> aiMoveSet = new HashMap<Integer[], HexapawnMove[]>();
     public int from;
     public int to;
-    public HexapawnMove lastMove;
+
+    // First two digits is the boardConfigurations key, last digit is the index of the move set
+    public int lastMoveCode;
 
     public HexapawnAI() {
         createBoardConfigurations();
@@ -20,6 +22,12 @@ public class HexapawnAI {
         public void setFrom(int from) { this.from = from; }
         public void setTo(int to) { this.to = to; }
         public void makeBadMove() { goodMove = false; }
+        public void reverse() {
+            if(from == 0 || from == 3 || from == 6) { from += 2; }
+            if(from == 2 || from == 5 || from == 8) { from -= 2; }
+            if(to == 0 || to == 3 || to == 6) { to += 2; }
+            if(to == 2 || to == 5 || to == 8) { to -= 2; }
+        }
     }
 
     private Integer[] fillArray(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {
@@ -239,7 +247,7 @@ public class HexapawnAI {
         return dupArr;
     }
 
-    public Integer[] getCorrectKey(int[] board) {
+    public int getCorrectKey(int[] board) {
         int correctKey = 0;
         int correctness = 0;
         boolean reverse = false;
@@ -248,7 +256,7 @@ public class HexapawnAI {
             correctness = 0;
             correctKey = i;
             for(int j = 0; j < board.length; ++j) {
-                if(i < boardConfigurations.size()) {
+                if(i < length) {
                     if(board[j] == boardConfigurations.get(i)[j]) {
                         ++correctness;
                     }
@@ -264,18 +272,59 @@ public class HexapawnAI {
                 break;
             }
         }
-        return boardConfigurations.get(correctKey);
+        if(reverse) {
+            return correctKey * 100;
+        }
+        return correctKey;
+    }
+
+    public boolean isLegalMove(int from, int to, int[] currentBoard) {
+        if(to == from + 3) { //Check if piece is moving directly ahead
+            if(currentBoard[to] == HexapawnGUI.EMPTY) { return true; }
+        }
+        else if((to == from + 2 && (from - 1) % 3 != 0 ) || to == from + 4) { //Check if piece is moving diagonally
+            if(currentBoard[to] == HexapawnGUI.WHITE_PAWN) { return true; }
+        }
+
+        return false;
+    }
+
+    public boolean areTherePossibleMoves(int[] currentBoard) {
+        for(int i = 0; i < currentBoard.length; ++i) {
+            if(currentBoard[i] == HexapawnGUI.BLACK_PAWN) {
+                if(isLegalMove(i, i+2, currentBoard) || isLegalMove(i, i+3, currentBoard) || isLegalMove(i, i+4, currentBoard)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void createMove(int[] currentBoard) {
-        HexapawnMove[] moveSet = aiMoveSet.get(getCorrectKey(currentBoard));
-        HexapawnMove move = moveSet[(int) (Math.random() * moveSet.length)];
-        do {
-            move = moveSet[(int) (Math.random() * moveSet.length)];
-        } while(!move.goodMove);
-        lastMove = move;
-        from = move.from;
-        to = move.to;
+        if(areTherePossibleMoves(currentBoard)) {
+            HexapawnMove[] moveSet = aiMoveSet.get(boardConfigurations.get(getCorrectKey(currentBoard)%100));
+            HexapawnMove move = moveSet[(int) (Math.random() * moveSet.length)];
+            int randomNumber = 0;
+            do {
+                randomNumber = (int) (Math.random() * moveSet.length);
+                move = moveSet[randomNumber];
+            } while(!move.goodMove);
+            lastMoveCode = (getCorrectKey(currentBoard) * 10) + randomNumber;
+            if(getCorrectKey(currentBoard) % 100 == 1) {
+                move.reverse();
+            }
+            from = move.from;
+            to = move.to;
+        }
+        else {
+            to = -1;
+        }
+    }
+
+    public void removeLastMove() {
+        int key = lastMoveCode / 10;
+        int index = lastMoveCode % 10;
+        aiMoveSet.get(boardConfigurations.get(key))[index].makeBadMove();
     }
 
 }
