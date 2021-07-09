@@ -202,8 +202,80 @@ public class HexapawnAI {
             initializeMoveArray(moveSet18);
                 moveSet18[0].setFrom(1); moveSet18[0].setTo(5);
                 moveSet18[1].setFrom(4); moveSet18[1].setTo(7);
+
+        // <---- Adding to AI Moves Hash Map ---->
+        aiMoveSet.put(boardConfigurations.get(0), moveSet0);
+        aiMoveSet.put(boardConfigurations.get(1), moveSet1);
+        aiMoveSet.put(boardConfigurations.get(2), moveSet2);
+        aiMoveSet.put(boardConfigurations.get(3), moveSet3);
+        aiMoveSet.put(boardConfigurations.get(4), moveSet4);
+        aiMoveSet.put(boardConfigurations.get(5), moveSet5);
+        aiMoveSet.put(boardConfigurations.get(6), moveSet6);
+        aiMoveSet.put(boardConfigurations.get(7), moveSet7);
+        aiMoveSet.put(boardConfigurations.get(8), moveSet8);
+        aiMoveSet.put(boardConfigurations.get(9), moveSet9);
+        aiMoveSet.put(boardConfigurations.get(10), moveSet10);
+        aiMoveSet.put(boardConfigurations.get(11), moveSet11);
+        aiMoveSet.put(boardConfigurations.get(12), moveSet12);
+        aiMoveSet.put(boardConfigurations.get(13), moveSet13);
+        aiMoveSet.put(boardConfigurations.get(14), moveSet14);
+        aiMoveSet.put(boardConfigurations.get(15), moveSet15);
+        aiMoveSet.put(boardConfigurations.get(16), moveSet16);
+        aiMoveSet.put(boardConfigurations.get(17), moveSet17);
+        aiMoveSet.put(boardConfigurations.get(18), moveSet18);
     }
 
-    
+    public void swap(int indexA, int indexB, Integer[] arr) {
+        int temp = indexA;
+        arr[indexA] = arr[indexB];
+        arr[indexB] = arr[temp];
+    }
+
+    public Integer[] getReversedArray(Integer[] arr) {
+        Integer[] dupArr = arr;
+        swap(0, 2, dupArr);
+        swap(3, 5, dupArr);
+        swap(6, 8, dupArr);
+        return dupArr;
+    }
+
+    public Integer[] getCorrectKey(int[] board) {
+        int correctKey = 0;
+        int correctness = 0;
+        boolean reverse = false;
+        int length = boardConfigurations.size();
+        for(int i = 0; i < length * 2; ++i) {
+            correctness = 0;
+            correctKey = i;
+            for(int j = 0; j < board.length; ++j) {
+                if(i < boardConfigurations.size()) {
+                    if(board[j] == boardConfigurations.get(i)[j]) {
+                        ++correctness;
+                    }
+                }
+                else {
+                    reverse = true;
+                    if(board[j] == getReversedArray(boardConfigurations.get(i))[j]) {
+                        ++correctness;
+                    }
+                }
+            }
+            if(correctness == board.length) {
+                break;
+            }
+        }
+        return boardConfigurations.get(correctKey);
+    }
+
+    public void createMove(int[] currentBoard) {
+        HexapawnMove[] moveSet = aiMoveSet.get(getCorrectKey(currentBoard));
+        HexapawnMove move = moveSet[(int) (Math.random() * moveSet.length)];
+        do {
+            move = moveSet[(int) (Math.random() * moveSet.length)];
+        } while(!move.goodMove);
+        lastMove = move;
+        from = move.from;
+        to = move.to;
+    }
 
 }
