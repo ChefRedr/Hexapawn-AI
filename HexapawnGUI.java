@@ -18,15 +18,15 @@ public class HexapawnGUI extends JFrame implements ActionListener {
     private final int BOARD_LENGTH = 9;
     private int[] gameBoard = new int[BOARD_LENGTH];
     private JButton[] buttonBoard = new JButton[BOARD_LENGTH];
-    ImageIcon whitePawnIcon = new ImageIcon("images\\hexapawn_white_pawn.png");
-    ImageIcon blackPawnIcon = new ImageIcon("images\\hexapawn_black_pawn.png");
+    private ImageIcon whitePawnIcon = new ImageIcon("images\\hexapawn_white_pawn.png");
+    private ImageIcon blackPawnIcon = new ImageIcon("images\\hexapawn_black_pawn.png");
     private boolean whiteTurn = true;
     private int whiteWins = 0;
     private int blackWins = 0;
     private JLabel whiteWinsLabel = new JLabel("Human Wins: " + whiteWins);
     private JLabel blackWinsLabel = new JLabel("AI Wins: " + blackWins);
     private JLabel botIntelligence = new JLabel("AI Intelligence Level: ");
-    Font myFont = new Font("Ariel", Font.PLAIN, 25);
+    private Font myFont = new Font("Ariel", Font.PLAIN, 25);
 
     private final static int EMPTY = 0;
     private final static int WHITE_PAWN = 1;
@@ -48,7 +48,8 @@ public class HexapawnGUI extends JFrame implements ActionListener {
 
         gamePanel.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         gamePanel.setLayout(null);
-        initializeBoard();
+        initializeButtons();
+        setBoard();
         gamePanel.add(whiteWinsLabel);
         gamePanel.add(blackWinsLabel);
         gamePanel.add(botIntelligence);
@@ -58,22 +59,28 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public void initializeBoard() {
+    public void setBoard() {
         for(int i = 0; i < BOARD_LENGTH; ++i) {
-            buttonBoard[i] = new JButton();
-            buttonBoard[i].addActionListener(this);
-            buttonBoard[i].setBounds(((i*100) % 300) + 100, ((i/3)*100) + 100, 100, 100);
             if(i >= 0 && i <= 2) {
                 gameBoard[i] = BLACK_PAWN;
                 buttonBoard[i].setIcon(blackPawnIcon);
             }
             else if(i >= 3 && i <= 5) {
                 gameBoard[i] = EMPTY;
+                buttonBoard[i].setIcon(null);
             }
             else {
                 gameBoard[i] = WHITE_PAWN;
                 buttonBoard[i].setIcon(whitePawnIcon);
             }
+        }
+    }
+
+    public void initializeButtons() {
+        for(int i = 0; i < BOARD_LENGTH; ++i) {
+            buttonBoard[i] = new JButton();
+            buttonBoard[i].addActionListener(this);
+            buttonBoard[i].setBounds(((i*100) % 300) + 100, ((i/3)*100) + 100, 100, 100);
             gamePanel.add(buttonBoard[i]);
         }
     }
@@ -97,8 +104,22 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         }
     }
 
-    public void checkWin() {
+    public boolean areTherePossibleMoves() {
+        for(int i = 0; i < BOARD_LENGTH; ++i) {
+            if(gameBoard[i] == WHITE_PAWN) {
+                if(isLegalMove(i, i-2) || isLegalMove(i, i-3) || isLegalMove(i, i-4)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
+    public boolean checkWin() {
+        if(gameBoard[0] == WHITE_PAWN || gameBoard[1] == WHITE_PAWN || gameBoard[2] == WHITE_PAWN) {
+            return true;
+        }
+        return false;
     }
 
     public void move(int from, int to) {
@@ -110,15 +131,22 @@ public class HexapawnGUI extends JFrame implements ActionListener {
                 gameBoard[from] = EMPTY;
                 buttonBoard[from].setIcon(null);
                 // whiteTurn = false;
+                if(checkWin()) {
+                    setBoard();
+                    whiteTurn = true;
+                    ++whiteWins;
+                    whiteWinsLabel.setText("Human Wins: " + whiteWins);
+                }
             }
+            if(gameBoard[from] > 10) { gameBoard[from] -= SELECTED; }
             buttonBoard[from].setBackground(null);
         }
         printInfo();
     }
 
     /*
-     * Will return the index of any piece that is selected
-     * Will return -1 if there are no pieces selected
+     * returns the index of any piece that is selected
+     * returns -1 if there are no pieces selected
     */
     public int findSelectedIndex() {
         for(int i = 0; i < BOARD_LENGTH; ++i) {
