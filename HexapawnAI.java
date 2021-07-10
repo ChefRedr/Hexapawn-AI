@@ -1,35 +1,25 @@
 import java.util.HashMap;
 
 public class HexapawnAI {
+
     private HashMap<Integer, Integer[]> boardConfigurations = new HashMap<Integer, Integer[]>();
-<<<<<<< HEAD
     private HashMap<Integer[], HexapawnMove[]> aiMoveSet = new HashMap<Integer[], HexapawnMove[]>();
     public int from;
     public int to;
-
-    // First two digits is the boardConfigurations key, last digit is the index of the move set
-    public int lastMoveCode;
+    public HexapawnMove lastMove;
 
     public HexapawnAI() {
         createBoardConfigurations();
         createAIMoves();
     }
-=======
->>>>>>> parent of 6bef4c2 (Added all AI moves)
 
     class HexapawnMove {
         int from = 0;
         int to = 0;
+        boolean goodMove = true;
         public void setFrom(int from) { this.from = from; }
         public void setTo(int to) { this.to = to; }
-<<<<<<< HEAD
         public void makeBadMove() { goodMove = false; }
-        public void reverse() {
-            if(from == 0 || from == 3 || from == 6) { from += 2; }
-            if(from == 2 || from == 5 || from == 8) { from -= 2; }
-            if(to == 0 || to == 3 || to == 6) { to += 2; }
-            if(to == 2 || to == 5 || to == 8) { to -= 2; }
-        }
     }
 
     private Integer[] fillArray(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {
@@ -212,124 +202,8 @@ public class HexapawnAI {
             initializeMoveArray(moveSet18);
                 moveSet18[0].setFrom(1); moveSet18[0].setTo(5);
                 moveSet18[1].setFrom(4); moveSet18[1].setTo(7);
-
-        // <---- Adding to AI Moves Hash Map ---->
-        aiMoveSet.put(boardConfigurations.get(0), moveSet0);
-        aiMoveSet.put(boardConfigurations.get(1), moveSet1);
-        aiMoveSet.put(boardConfigurations.get(2), moveSet2);
-        aiMoveSet.put(boardConfigurations.get(3), moveSet3);
-        aiMoveSet.put(boardConfigurations.get(4), moveSet4);
-        aiMoveSet.put(boardConfigurations.get(5), moveSet5);
-        aiMoveSet.put(boardConfigurations.get(6), moveSet6);
-        aiMoveSet.put(boardConfigurations.get(7), moveSet7);
-        aiMoveSet.put(boardConfigurations.get(8), moveSet8);
-        aiMoveSet.put(boardConfigurations.get(9), moveSet9);
-        aiMoveSet.put(boardConfigurations.get(10), moveSet10);
-        aiMoveSet.put(boardConfigurations.get(11), moveSet11);
-        aiMoveSet.put(boardConfigurations.get(12), moveSet12);
-        aiMoveSet.put(boardConfigurations.get(13), moveSet13);
-        aiMoveSet.put(boardConfigurations.get(14), moveSet14);
-        aiMoveSet.put(boardConfigurations.get(15), moveSet15);
-        aiMoveSet.put(boardConfigurations.get(16), moveSet16);
-        aiMoveSet.put(boardConfigurations.get(17), moveSet17);
-        aiMoveSet.put(boardConfigurations.get(18), moveSet18);
     }
 
-    public void swap(int indexA, int indexB, Integer[] arr) {
-        int temp = indexA;
-        arr[indexA] = arr[indexB];
-        arr[indexB] = arr[temp];
-    }
+    
 
-    public Integer[] getReversedArray(Integer[] arr) {
-        Integer[] dupArr = arr;
-        swap(0, 2, dupArr);
-        swap(3, 5, dupArr);
-        swap(6, 8, dupArr);
-        return dupArr;
-    }
-
-    public int getCorrectKey(int[] board) {
-        int correctKey = 0;
-        int correctness = 0;
-        boolean reverse = false;
-        int length = boardConfigurations.size();
-        for(int i = 0; i < length * 2; ++i) {
-            correctness = 0;
-            correctKey = i;
-            for(int j = 0; j < board.length; ++j) {
-                if(i < length) {
-                    if(board[j] == boardConfigurations.get(i)[j]) {
-                        ++correctness;
-                    }
-                }
-                else {
-                    reverse = true;
-                    if(board[j] == getReversedArray(boardConfigurations.get(i))[j]) {
-                        ++correctness;
-                    }
-                }
-            }
-            if(correctness == board.length) {
-                break;
-            }
-        }
-        if(reverse) {
-            return correctKey * 100;
-        }
-        return correctKey;
-    }
-
-    public boolean isLegalMove(int from, int to, int[] currentBoard) {
-        if(to == from + 3) { //Check if piece is moving directly ahead
-            if(currentBoard[to] == HexapawnGUI.EMPTY) { return true; }
-        }
-        else if((to == from + 2 && (from - 1) % 3 != 0 ) || to == from + 4) { //Check if piece is moving diagonally
-            if(currentBoard[to] == HexapawnGUI.WHITE_PAWN) { return true; }
-        }
-
-        return false;
-    }
-
-    public boolean areTherePossibleMoves(int[] currentBoard) {
-        for(int i = 0; i < currentBoard.length; ++i) {
-            if(currentBoard[i] == HexapawnGUI.BLACK_PAWN) {
-                if(isLegalMove(i, i+2, currentBoard) || isLegalMove(i, i+3, currentBoard) || isLegalMove(i, i+4, currentBoard)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void createMove(int[] currentBoard) {
-        if(areTherePossibleMoves(currentBoard)) {
-            HexapawnMove[] moveSet = aiMoveSet.get(boardConfigurations.get(getCorrectKey(currentBoard)%100));
-            HexapawnMove move = moveSet[(int) (Math.random() * moveSet.length)];
-            int randomNumber = 0;
-            do {
-                randomNumber = (int) (Math.random() * moveSet.length);
-                move = moveSet[randomNumber];
-            } while(!move.goodMove);
-            lastMoveCode = (getCorrectKey(currentBoard) * 10) + randomNumber;
-            if(getCorrectKey(currentBoard) % 100 == 1) {
-                move.reverse();
-            }
-            from = move.from;
-            to = move.to;
-        }
-        else {
-            to = -1;
-        }
-    }
-
-    public void removeLastMove() {
-        int key = lastMoveCode / 10;
-        int index = lastMoveCode % 10;
-        aiMoveSet.get(boardConfigurations.get(key))[index].makeBadMove();
-    }
-
-=======
-    }
->>>>>>> parent of 6bef4c2 (Added all AI moves)
 }
