@@ -23,6 +23,7 @@ public class HexapawnGUI extends JFrame implements ActionListener {
     private boolean whiteTurn = true;
     private int whiteWins = 0;
     private int blackWins = 0;
+    private int botIntelligence = 0;
     private JLabel whiteWinsLabel = new JLabel("Human Wins: " + whiteWins);
     private JLabel blackWinsLabel = new JLabel("AI Wins: " + blackWins);
     private JLabel botIntelligence = new JLabel("AI Intelligence Level: ");
@@ -44,8 +45,8 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         whiteWinsLabel.setFont(myFont);
         blackWinsLabel.setBounds(165, 425, 300, 50);
         blackWinsLabel.setFont(myFont);
-        botIntelligence.setBounds(100, 35, 300, 50);
-        botIntelligence.setFont(myFont);
+        botIntelligenceLabel.setBounds(100, 35, 300, 50);
+        botIntelligenceLabel.setFont(myFont);
 
         gamePanel.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         gamePanel.setLayout(null);
@@ -53,7 +54,7 @@ public class HexapawnGUI extends JFrame implements ActionListener {
         setBoard();
         gamePanel.add(whiteWinsLabel);
         gamePanel.add(blackWinsLabel);
-        gamePanel.add(botIntelligence);
+        gamePanel.add(botIntelligenceLabel);
 
         add(gamePanel);
         pack();
@@ -138,44 +139,13 @@ public class HexapawnGUI extends JFrame implements ActionListener {
                 buttonBoard[to].setIcon(whitePawnIcon);
                 gameBoard[from] = EMPTY;
                 buttonBoard[from].setIcon(null);
-                whiteTurn = false;
-                if(checkWin(WHITE_PAWN)) {
-                    setBoard();
-                    whiteTurn = true;
-                    ++whiteWins;
-                    whiteWinsLabel.setText("Human Wins: " + whiteWins);
-                    AI.removeLastMove();
-                }
-                else {
-                    AI.createMove(gameBoard);
-                    move(AI.from, AI.to);
-                }
+                // whiteTurn = false;
             }
             if(gameBoard[from] > 10) { gameBoard[from] -= SELECTED; }
             buttonBoard[from].setBackground(null);
         }
         else {
-            if(to != -1) {
-                System.out.println("Black's Move - From: " + from + " To: " + to);
-                gameBoard[to] = BLACK_PAWN;
-                buttonBoard[to].setIcon(blackPawnIcon);
-                gameBoard[from] = EMPTY;
-                buttonBoard[from].setIcon(null);
-                if(checkWin(BLACK_PAWN) || !areTherePossibleMoves()) {
-                    setBoard();
-                    whiteTurn = true;
-                    ++blackWins;
-                    blackWinsLabel.setText("AI Wins: " + blackWins);
-                }
-                else { whiteTurn = true; }
-            }
-            else {
-                setBoard();
-                whiteTurn = true;
-                ++whiteWins;
-                whiteWinsLabel.setText("Human Wins: " + whiteWins);
-                AI.removeLastMove();
-            }
+            
         }
         printInfo();
     }
