@@ -26,7 +26,7 @@ public class HexapawnGUI extends JFrame implements ActionListener {
     private int botIntelligence = 0;
     private JLabel whiteWinsLabel = new JLabel("Human Wins: " + whiteWins);
     private JLabel blackWinsLabel = new JLabel("AI Wins: " + blackWins);
-    private JLabel botIntelligence = new JLabel("AI Intelligence Level: ");
+    private JLabel botIntelligenceLabel = new JLabel("AI Intelligence Level: " + botIntelligence);
     private Font myFont = new Font("Ariel", Font.PLAIN, 25);
     HexapawnAI AI = new HexapawnAI();
 
