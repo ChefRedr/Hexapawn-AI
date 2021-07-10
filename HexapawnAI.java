@@ -1,8 +1,8 @@
 import java.util.HashMap;
 
 public class HexapawnAI {
-
     private HashMap<Integer, Integer[]> boardConfigurations = new HashMap<Integer, Integer[]>();
+<<<<<<< HEAD
     private HashMap<Integer[], HexapawnMove[]> aiMoveSet = new HashMap<Integer[], HexapawnMove[]>();
     public int from;
     public int to;
@@ -14,13 +14,15 @@ public class HexapawnAI {
         createBoardConfigurations();
         createAIMoves();
     }
+=======
+>>>>>>> parent of 6bef4c2 (Added all AI moves)
 
     class HexapawnMove {
         int from = 0;
         int to = 0;
-        boolean goodMove = true;
         public void setFrom(int from) { this.from = from; }
         public void setTo(int to) { this.to = to; }
+<<<<<<< HEAD
         public void makeBadMove() { goodMove = false; }
         public void reverse() {
             if(from == 0 || from == 3 || from == 6) { from += 2; }
@@ -327,4 +329,7 @@ public class HexapawnAI {
         aiMoveSet.get(boardConfigurations.get(key))[index].makeBadMove();
     }
 
+=======
+    }
+>>>>>>> parent of 6bef4c2 (Added all AI moves)
 }

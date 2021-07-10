@@ -144,6 +144,7 @@ public class HexapawnGUI extends JFrame implements ActionListener {
                     whiteTurn = true;
                     ++whiteWins;
                     whiteWinsLabel.setText("Human Wins: " + whiteWins);
+                    AI.removeLastMove();
                 }
                 else {
                     AI.createMove(gameBoard);
@@ -167,6 +168,13 @@ public class HexapawnGUI extends JFrame implements ActionListener {
                     blackWinsLabel.setText("AI Wins: " + blackWins);
                 }
                 else { whiteTurn = true; }
+            }
+            else {
+                setBoard();
+                whiteTurn = true;
+                ++whiteWins;
+                whiteWinsLabel.setText("Human Wins: " + whiteWins);
+                AI.removeLastMove();
             }
         }
         printInfo();
