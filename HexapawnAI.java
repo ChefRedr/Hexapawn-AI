@@ -204,6 +204,26 @@ public class HexapawnAI {
                 moveSet18[1].setFrom(4); moveSet18[1].setTo(7);
     }
 
-    
+    public int getCorrectKey(int[] board) {
+        int correctKey = 0;
+        int correctness = 0;
+        for(int i = 0; i < boardConfigurations.size(); ++i) {
+            correctness = 0;
+            correctKey = i;
+            for(int j = 0; j < board.length; ++j) {
+                if(board[j] == boardConfigurations.get(i)[j]) {
+                    ++correctness;
+                }
+            }
+            if(correctness == board.length) {
+                break;
+            }
+        }
+        return correctKey;
+    }
+
+    public void createMove(int[] currentBoard) {
+
+    }
 
 }
