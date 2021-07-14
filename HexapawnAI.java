@@ -202,28 +202,106 @@ public class HexapawnAI {
             initializeMoveArray(moveSet18);
                 moveSet18[0].setFrom(1); moveSet18[0].setTo(5);
                 moveSet18[1].setFrom(4); moveSet18[1].setTo(7);
+            
+            // <---- Adding to AI Moves Hash Map ---->
+            aiMoveSet.put(boardConfigurations.get(0), moveSet0);
+            aiMoveSet.put(boardConfigurations.get(1), moveSet1);
+            aiMoveSet.put(boardConfigurations.get(2), moveSet2);
+            aiMoveSet.put(boardConfigurations.get(3), moveSet3);
+            aiMoveSet.put(boardConfigurations.get(4), moveSet4);
+            aiMoveSet.put(boardConfigurations.get(5), moveSet5);
+            aiMoveSet.put(boardConfigurations.get(6), moveSet6);
+            aiMoveSet.put(boardConfigurations.get(7), moveSet7);
+            aiMoveSet.put(boardConfigurations.get(8), moveSet8);
+            aiMoveSet.put(boardConfigurations.get(9), moveSet9);
+            aiMoveSet.put(boardConfigurations.get(10), moveSet10);
+            aiMoveSet.put(boardConfigurations.get(11), moveSet11);
+            aiMoveSet.put(boardConfigurations.get(12), moveSet12);
+            aiMoveSet.put(boardConfigurations.get(13), moveSet13);
+            aiMoveSet.put(boardConfigurations.get(14), moveSet14);
+            aiMoveSet.put(boardConfigurations.get(15), moveSet15);
+            aiMoveSet.put(boardConfigurations.get(16), moveSet16);
+            aiMoveSet.put(boardConfigurations.get(17), moveSet17);
+            aiMoveSet.put(boardConfigurations.get(18), moveSet18);
+    }
+
+    public void swap(int[] array, int index1, int index2) {
+        int temp = array[index1];
+        array[index1] = array[index2];
+        array[index2] = temp;
+    }
+
+    public int[] reverseArray(int[] array) {
+        int[] clonedArray = array.clone();
+        swap(clonedArray, 0, 2);
+        swap(clonedArray, 3, 5);
+        swap(clonedArray, 6, 8);
+        return clonedArray;
     }
 
     public int getCorrectKey(int[] board) {
         int correctKey = 0;
         int correctness = 0;
-        for(int i = 0; i < boardConfigurations.size(); ++i) {
+        boolean foundKey = false;
+        boolean reverse = false;
+        for(int i = 0; i < boardConfigurations.size() * 2; ++i) {
             correctness = 0;
-            correctKey = i;
+            correctKey = i % boardConfigurations.size();
+            if(i == boardConfigurations.size()) {
+                board = reverseArray(board);
+                reverse = true;
+            }
             for(int j = 0; j < board.length; ++j) {
-                if(board[j] == boardConfigurations.get(i)[j]) {
+                if(board[j] == boardConfigurations.get(correctKey)[j]) {
                     ++correctness;
                 }
             }
             if(correctness == board.length) {
+                foundKey = true;
                 break;
             }
         }
-        return correctKey;
+        if(foundKey) {
+            if(reverse) { return correctKey + 100; }
+            else { return correctKey; }
+        }
+        return -1;
+    }
+
+    public boolean onlyOneAvailableMove(HexapawnMove[] moveSet) {
+        int availableMoves = 0;
+        for(int i = 0; i < moveSet.length; ++i) {
+            if(moveSet[i].goodMove) { ++availableMoves; }
+        }
+        if(availableMoves == 1) { return true; }
+        else { return false; }
+    }
+
+    public HexapawnMove reverseMove(HexapawnMove move) {
+        HexapawnMove clonedMove = move;
+        if(move.from % 3 == 0) { clonedMove.setFrom(move.from + 2); }
+        else if((move.from + 1) % 3 == 0) { clonedMove.setFrom(move.from - 2); }
+        if(move.to % 3 == 0) { clonedMove.setTo(move.to + 2); }
+        else if((move.to + 1) % 3 == 0) { clonedMove.setTo(move.to - 2); }
+        return clonedMove;
     }
 
     public void createMove(int[] currentBoard) {
-
+        int boardKey = getCorrectKey(currentBoard);
+        System.out.println("Board key is : "+boardKey);
+        if(boardKey != -1) {
+            HexapawnMove[] moveSet = aiMoveSet.get(boardConfigurations.get(boardKey % 100));
+            HexapawnMove move = moveSet[(int) (Math.random() * moveSet.length)];
+            while(!move.goodMove) {
+                move = moveSet[(int) (Math.random() * moveSet.length)];
+            }
+            if(boardKey / 100 == 1) { move = reverseMove(move); }
+            from = move.from;
+            to = move.to;
+        }
+        else {
+            to = -1; //-1 means that black has no moves
+        }
     }
 
 }
